@@ -30,7 +30,7 @@ var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
-app.set('port', process.env.PORT || 1337);
+app.set('port', process.env.PORT || 80);
 console.log('The magic happens on port 3000');
 
 //Body parser must be added before any POST/GET commands
