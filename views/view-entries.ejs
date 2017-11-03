@@ -1,0 +1,233 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Journal display</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+    </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1>Journal Entry Viewer</h1> <h4>Currently <%=Number(entries.length)%>  Journal entries.</h4>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        
+        <div class="container"> 
+    <br>
+    <center>
+  <button class="btn btn-primary btn-lg" href="#signup" data-toggle="modal" data-target=".bs-modal-sm"><span class="fa fa-search fa-lg"></span> Search Entry </button>
+  </center>
+  <br>
+ </div>
+        
+    </div>
+    <script> var i=0 </script>
+    
+        <div class="row">
+            <% for(i=0; i<entries.length; i++) {%>  
+            <div class="col-sm-6">
+            <div class="well">
+                
+                <h3><span class="glyphicon glyphicon-book"></span> Entry number: <%= 1+i %></h3>
+
+                    <p id="<%= 1+i %>">
+                        <%= entries[i].entrydesc %>
+                    </p>
+                <hr>
+                <div class ="row">
+                    <div class="col-sm-6">
+                        <button class="btn btn-info btn-sml center-block" data-toggle="modal" data-target="#myModal<%= entries[i].entrynum %>">Modify Entry</button>
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <button href="view-entries.ejs" class="btn btn-danger btn-sml deleteEntry center-block" value="<%= entries[i].entrynum %>" onclick="deleteFun(this.value)"> Delete</button>
+                    </div>
+                
+                
+                </div>
+                
+                                      <!-- Modal for EDIT -->
+                      <div class="modal fade" id="myModal<%= entries[i].entrynum %>" role="dialog">
+                        <div class="modal-dialog">
+
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Edit Entry</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/entriesUP" method="POST">
+                                  <div class="form-group">
+                                    <label for="exampleTextarea">Journal Entry:</label>
+                                    <textarea required class="form-control" id="exampleTextarea" rows="5"  name="entrydesc"><%= entries[i].entrydesc %></textarea>
+                                  </div>
+
+                                <input type="hidden" value="<%= entries[i].entrynum %>" name="entrynum">
+                                <button type="submit" class="btn btn-primary btn-sml">Submit Edit</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+            </div>
+            </div>
+            <% } %>
+    </div>
+
+    <h2>Create entries:</h2> 
+    
+<form action="/view-entries" method="POST">
+  <div class="form-group">
+    
+    <textarea required class="form-control" id="exampleTextarea" rows="5" placeholder="Enter your journal entry" name="entrydesc"></textarea>
+  </div>
+
+<input type="hidden" value="<%- entries.length%>" name="entrynum">
+<button type="submit" class="btn btn-primary center-block btn-lg">Submit</button>
+</form>
+    
+    
+<!-- Modal for SEARCH -->
+<div class="modal fade bs-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="signin">
+           
+            
+
+            <div class="control-group">
+              <div class="controls">
+                <input required="" id="sID" name="searchid" type="text" class="form-control" placeholder="Enter Entry Number" class="input-medium"  required="">
+              </div>
+            </div>
+
+            <!-- Button -->
+            <div class="control-group">
+              <label class="control-label" for="search"></label>
+              <div class="controls">
+                <button data-toggle="modal" data-dismiss="modal" data-target="#resultModal"id="searchbtn" name="search" class="btn btn-success btn-lg btn-block">Search</button>
+              </div>
+            </div>
+            
+            <script>
+            document.getElementById("searchbtn").addEventListener("click", myFunction);
+
+            function myFunction() {
+                
+                
+
+                var searchID = document.getElementById("sID").value;
+                var entryResult = 404;
+                if(document.getElementById(searchID) == null )
+                    {
+                        alert("Error, entry does not exist")
+                        location.reload();
+                    }
+                else{
+                
+                entryResult = document.getElementById(searchID).innerHTML;
+                var textArea = document.getElementById("schDesc");
+                textArea.innerHTML = entryResult
+                
+                }
+                
+            }
+            </script>
+
+           
+            <!-- Button -->
+            <div class="control-group">
+              <label class="control-label" for="signin"></label>
+              <center>
+              <div class="controls">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+              </center>
+            </div>
+            
+            
+        </div>
+
+            
+      </div>
+    
+  </div>
+</div>
+    </div>
+    </div>
+    
+    
+                                          <!-- Modal for RESULT -->
+                      <div class="modal fade" id="resultModal" role="dialog">
+                        <div class="modal-dialog">
+
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title"> Result Entry</h4>
+                            </div>
+                            <div class="modal-body">
+                                
+                                  <div class="well">
+                                    <h3><span class="glyphicon glyphicon-book"></span> Result Entry</h3>
+                                    <p id="schDesc"  name="entrydesc"></p>
+                                  </div>
+
+                                
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+    
+
+ 
+
+</div>a
+
+<script>
+    function deleteFun(value)
+    {
+        fetch('view-entries', {
+            method: 'delete',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            'entrynum': value
+            })
+        })
+        .then(res => {
+            if (res.ok) return res.json()
+        }).
+        then(data => {
+            console.log(data)
+            window.location.reload()
+        })
+    }
+</script>
+
+</body>
+</html>
